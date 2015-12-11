@@ -11,13 +11,18 @@ function getRandomInt(min, max) {
 module.exports = {
 
   dice: function (req, res){
-    if (req.param('d')){
-      sides = parseInt(req.param('d'))
+    if (req.param('text')){
+      nums = req.param('text').split(' ')
+      sides = parseInt(nums[0])
       add = 0
-      if (req.param('a')){
-         add = parseInt(req.param('a'))
+      if (nums.length > 1){
+        add = parseInt(nums[1])
       }
-      roll = getRandomInt(1, sides)
+
+      calculation = '(random number between 1 and ' + sides.toString() + ') + ' + add.toString();
+
+      original_roll = getRandomInt(1, sides)
+      roll = original_roll
       if (roll == 1){
         msg = "critical miss"
         status = -1
@@ -31,9 +36,11 @@ module.exports = {
       }
 
 
-      return res.send({'roll': roll.toString(), 'status': status, 'msg': msg})
+
+      return res.send({'original_roll':original_roll,'roll': roll.toString(), 'status': status, 'msg': msg,
+          'calculation': calculation})
     } else {
-      return res.send("must pass in a d param.")
+      return res.send("must pass in a sides param.")
     }
 
   }
