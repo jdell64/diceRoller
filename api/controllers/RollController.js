@@ -18,8 +18,18 @@ module.exports = {
         nums = req.param('text').split(' ')
         sides = parseInt(nums[0])
         add = 0
-        if (nums.length > 1){
-          add = parseInt(nums[1])
+        whisper = false
+
+        if (nums[1]){
+          if (parseInt(nums[1])){
+            add = parseInt(nums[1])
+          } else if (nums[1].toUpperCase() == 'W' ) {
+            whisper = true
+          }
+          if (nums[2] && nums[2].toUpperCase() == 'W'){
+            whisper = true
+          }
+
         }
 
         calculation = '(random number between 1 and ' + sides.toString() + ') + ' + add.toString();
@@ -28,11 +38,13 @@ module.exports = {
         roll = original_roll
         attachments_text = ''
         // crits only apply for 20s
+        extra_text = '.'
+
         if (sides == 20){
           if (roll == 1){
             msg = "critical miss"
             status = -1
-            attachments_text = 'Oh no! You rolled a 1!'
+            attachments_text = 'Oh no! Critical miss!'
           } else if (roll == 20){
             msg = "critical hit"
             status = 1
@@ -41,19 +53,32 @@ module.exports = {
             msg = "normal roll"
             status = 0
             roll += add
-            attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
-                               ' to give you ' + roll + '.'
+
+            if (add > 0){
+              extra_text += ' I added ' + add.toString() + ' to give you ' + roll + '.'
+            }
+
+            attachments_text = 'You originally rolled a ' + original_roll.toString() + extra_text
           }
         } else {
           roll += add
-          attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
-                                       ' to give you ' + roll + '.'
-        }
+            if (add > 0){
+              extra_text += ' I added ' + add.toString() + ' to give you ' + roll + '.'
+            }
+
+          attachments_text = 'You originally rolled a ' + original_roll.toString() + extra_text
+
+          }
 //      }
+      if (whisper){
+        response_type = 'ephemeral'
+      } else {
+        response_type = 'in_channel'
+      }
 
 
 
-      return res.send({'response_type': 'in_channel',
+      return res.send({'response_type': response_type,
                         'text' : "*"+ roll +"*",
                         'attachments' : [ {"text" : attachments_text}]
                         })
