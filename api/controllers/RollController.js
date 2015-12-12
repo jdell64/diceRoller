@@ -23,22 +23,38 @@ module.exports = {
 
       original_roll = getRandomInt(1, sides)
       roll = original_roll
-      if (roll == 1){
-        msg = "critical miss"
-        status = -1
-      } else if (roll == 20){
-        msg = "critical hit"
-        status = 1
+      attachments_text = ''
+      // crits only apply for 20s
+      if (sides == 20){
+        if (roll == 1){
+          msg = "critical miss"
+          status = -1
+          attachments_text = 'Oh no! You rolled a 1!'
+        } else if (roll == 20){
+          msg = "critical hit"
+          status = 1
+          attachments_text = 'WOOOOHOOO! CRITICAL HIT!!!'
+        } else {
+          msg = "normal roll"
+          status = 0
+          roll += add
+          attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
+                             ' to give you ' + roll + '.'
+        }
       } else {
-        msg = "normal roll"
-        status = 0
         roll += add
+        attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
+                                     ' to give you ' + roll + '.'
       }
 
 
 
-      return res.send({'original_roll':original_roll,'roll': roll.toString(), 'status': status, 'msg': msg,
-          'calculation': calculation})
+      return res.send({'response_type': 'in_channel',
+                        'text' : roll,
+                        'attachments' : [ {"text" : attachments_text}]
+                        })
+//      'original_roll':original_roll,'roll': roll.toString(), 'status': status, 'msg': msg,
+//          'calculation': calculation})
     } else {
       return res.send("must pass in a sides param.")
     }
