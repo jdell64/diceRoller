@@ -12,39 +12,42 @@ module.exports = {
 
   dice: function (req, res){
     if (req.param('text')){
-      nums = req.param('text').split(' ')
-      sides = parseInt(nums[0])
-      add = 0
-      if (nums.length > 1){
-        add = parseInt(nums[1])
-      }
+      if (req.param('token') and sails.conf.slackApiKey.split(',').indexOf(req.param('token')) > -1 ) {
 
-      calculation = '(random number between 1 and ' + sides.toString() + ') + ' + add.toString();
+        nums = req.param('text').split(' ')
+        sides = parseInt(nums[0])
+        add = 0
+        if (nums.length > 1){
+          add = parseInt(nums[1])
+        }
 
-      original_roll = getRandomInt(1, sides)
-      roll = original_roll
-      attachments_text = ''
-      // crits only apply for 20s
-      if (sides == 20){
-        if (roll == 1){
-          msg = "critical miss"
-          status = -1
-          attachments_text = 'Oh no! You rolled a 1!'
-        } else if (roll == 20){
-          msg = "critical hit"
-          status = 1
-          attachments_text = 'WOOOOHOOO! CRITICAL HIT!!!'
+        calculation = '(random number between 1 and ' + sides.toString() + ') + ' + add.toString();
+
+        original_roll = getRandomInt(1, sides)
+        roll = original_roll
+        attachments_text = ''
+        // crits only apply for 20s
+        if (sides == 20){
+          if (roll == 1){
+            msg = "critical miss"
+            status = -1
+            attachments_text = 'Oh no! You rolled a 1!'
+          } else if (roll == 20){
+            msg = "critical hit"
+            status = 1
+            attachments_text = 'WOOOOHOOO! CRITICAL HIT!!!'
+          } else {
+            msg = "normal roll"
+            status = 0
+            roll += add
+            attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
+                               ' to give you ' + roll + '.'
+          }
         } else {
-          msg = "normal roll"
-          status = 0
           roll += add
           attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
-                             ' to give you ' + roll + '.'
+                                       ' to give you ' + roll + '.'
         }
-      } else {
-        roll += add
-        attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
-                                     ' to give you ' + roll + '.'
       }
 
 
