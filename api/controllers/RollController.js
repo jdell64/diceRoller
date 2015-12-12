@@ -50,7 +50,7 @@ module.exports = {
 
 
       return res.send({'response_type': 'in_channel',
-                        'text' : roll,
+                        'text' : "*"+ roll +"*",
                         'attachments' : [ {"text" : attachments_text}]
                         })
 //      'original_roll':original_roll,'roll': roll.toString(), 'status': status, 'msg': msg,
