@@ -12,8 +12,9 @@ module.exports = {
 
   dice: function (req, res){
     if (req.param('text')){
-      if (req.param('token') and sails.conf.slackApiKey.split(',').indexOf(req.param('token')) > -1 ) {
 
+//      if (req.param('token') && sails.config.local.slackApiKey.split(',').indexOf(req.param('token')) > -1 ) {
+//TODO: API KEY, env variable?
         nums = req.param('text').split(' ')
         sides = parseInt(nums[0])
         add = 0
@@ -48,7 +49,7 @@ module.exports = {
           attachments_text = 'You originally rolled a ' + original_roll.toString() + '. I added ' + add.toString() +
                                        ' to give you ' + roll + '.'
         }
-      }
+//      }
 
 
 
