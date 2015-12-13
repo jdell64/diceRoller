@@ -10,18 +10,43 @@ function getRandomInt(min, max) {
 
 var crit_miss_texts = ['WOMP womp... Critical Miss!', 'Yay! Rolled a 1... oh wait, that\'s bad...',
                   'wow... you are terrible. Critical Miss.', 'Merry CritMiss!']
-
-var crit_hit_urls = ['https://i.ytimg.com/vi/fGl4LOAgW50/maxresdefault.jpg']
+var crit_miss_emoji = [':stuck_out_tongue_winking_eye:', ':confounded:', ':rage:', ':hankey:', ':scream:']
 
 var crit_hit_texts = ['OUCH, Critical Hit!', 'Take that baddie, Critical Hit.',
                       'You literally couldn\'t have rolled better... Critical Hit!', 'DAAAA']
+var crit_hit_emoji = [':heart_eyes:', ':clap:', ':smile:' ]
 
 
 var droll = require('droll');
 
 module.exports = {
 
-  dice2: function(req, res){
+  mm: function(req, res){
+    lvl = parseInt(req.param('text'))
+    if (lvl){
+      darts = 2 + lvl
+      rolls = []
+      total = 0
+      for(var i=0; i < darts; i++){
+        roll = droll.roll('1d4+1')
+        rolls.push(roll)
+        total += roll['total']
+      }
+      attachments_text = 'You cast Magic Missile at level '+ lvl + ' which gives you ' + darts + ' darts.' +
+                          'Your rolls (1d4+1): ' + rolls
+     return res.send({'response_type': 'in_channel',
+                      'text' : "*"+ total +"* pew pew!",
+                      'attachments' : [{"text" : attachments_text}]})
+
+
+    }else{
+      return res.send({'response_type': 'ephemeral',
+                       'text':'You typed something wrong... make sure you type in the format /mm [level]'})
+    }
+
+  },
+
+  dice: function(req, res){
     // expected input: 3d6+5 w
     nums = req.param('text').split(' ')
     //nums[0] == 3d6+5, [1] == 'w'
@@ -53,11 +78,13 @@ module.exports = {
         }
         if (sides == 20){
           if(rolls[0] == 20){
-            attachments_text =  crit_hit_texts[Math.floor(Math.random()*crit_hit_texts.length)] + '\n' +
-                                crit_hit_urls[Math.floor(Math.random()*crit_hit_urls.length)];
+            attachments_text =  crit_hit_emoji[Math.floor(Math.random()*crit_hit_emoji.length)] + ' ' +
+                                crit_hit_texts[Math.floor(Math.random()*crit_hit_texts.length)];
             total = 20
           } else if (rolls[0] == 1){
-            attachments_text =  crit_miss_texts[Math.floor(Math.random()*crit_miss_texts.length)];
+            attachments_text =  crit_miss_emoji[Math.floor(Math.random()*crit_miss_emoji.length)] + ' ' +
+            crit_miss_texts[Math.floor(Math.random()*crit_miss_texts.length)];
+
             total = 1
           }
         }
@@ -66,7 +93,8 @@ module.exports = {
       }
 
     } else {
-      return res.send("You typed something wrong... make sure you type in the format xdy+z (*ex: 3d6+2*)")
+      return res.send({'response_type': 'ephemeral',
+                       'text':"You typed something wrong... make sure you type in the format xdy+z (*ex: 3d6+2*)"})
     }
     if (whisper){
       response_type = 'ephemeral'
@@ -82,7 +110,7 @@ module.exports = {
   },
 
 
-  dice: function (req, res){
+  dice2: function (req, res){
     if (req.param('text')){
 
 //      if (req.param('token') && sails.config.local.slackApiKey.split(',').indexOf(req.param('token')) > -1 ) {
