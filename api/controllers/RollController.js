@@ -29,13 +29,13 @@ module.exports = {
       total = 0
       for(var i=0; i < darts; i++){
         roll = droll.roll('1d4+1')
-        rolls.push(roll)
+        rolls.push(roll['total'])
         total += roll['total']
       }
       attachments_text = 'You cast Magic Missile at level '+ lvl + ' which gives you ' + darts + ' darts.' +
                           'Your rolls (1d4+1): ' + rolls
      return res.send({'response_type': 'in_channel',
-                      'text' : "*"+ total +"* pew pew!",
+                      'text' : "*"+ total +"* damage!",
                       'attachments' : [{"text" : attachments_text}]})
 
 
