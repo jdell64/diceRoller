@@ -11,10 +11,20 @@ function getRandomInt(min, max) {
 var crit_miss_texts = ['WOMP womp... Critical Miss!', 'Yay! Rolled a 1... oh wait, that\'s bad...',
                   'wow... you are terrible. Critical Miss.', 'Merry CritMiss!']
 var crit_miss_emoji = [':stuck_out_tongue_winking_eye:', ':confounded:', ':rage:', ':hankey:', ':scream:']
+var crit_miss_urls = ['http://www.reactiongifs.com/r/dTa.gif',
+                      'http://www.reactiongifs.com/r/rrr.gif',
+                       'http://www.reactiongifs.com/r/trmp.gif',
+                       'http://www.reactiongifs.com/r/tumblr_mazjy9e9Dg1rvbizho2_250.gif',
+                       'http://www.reactiongifs.com/r/fmc.gif']
 
 var crit_hit_texts = ['OUCH, Critical Hit!', 'Take that baddie, Critical Hit.',
-                      'You literally couldn\'t have rolled better... Critical Hit!', 'DAAAA']
+                      'You literally couldn\'t have rolled better... Critical Hit!', 'DAAAAwwwww YEEEEEEaaaaaw! Crit']
 var crit_hit_emoji = [':heart_eyes:', ':clap:', ':smile:' ]
+var crit_hit_urls = ['https://i.ytimg.com/vi/fGl4LOAgW50/maxresdefault.jpg',
+                      'http://memecrunch.com/meme/7HU74/aww-yeah/image.gif',
+                       'http://www.reactiongifs.com/r/msli.gif',
+                       'http://www.reactiongifs.com/r/rdcl.gif',
+                       'http://www.reactiongifs.com/r/pnda.gif']
 
 
 var droll = require('droll');
@@ -52,8 +62,9 @@ module.exports = {
     //nums[0] == 3d6+5, [1] == 'w'
 
     whisper = false
-    operator = '+'
-    global_add = '0'
+
+
+    image_url = ''
 
     // if w was passed in, whisper.
     if (nums[1]){
@@ -81,10 +92,11 @@ module.exports = {
             attachments_text =  crit_hit_emoji[Math.floor(Math.random()*crit_hit_emoji.length)] + ' ' +
                                 crit_hit_texts[Math.floor(Math.random()*crit_hit_texts.length)];
             total = 20
+            image_url = crit_hit_urls[Math.floor(Math.random()*crit_hit_urls.length)]
           } else if (rolls[0] == 1){
             attachments_text =  crit_miss_emoji[Math.floor(Math.random()*crit_miss_emoji.length)] + ' ' +
             crit_miss_texts[Math.floor(Math.random()*crit_miss_texts.length)];
-
+            image_url = crit_miss_urls[Math.floor(Math.random()*crit_miss_urls.length)]
             total = 1
           }
         }
@@ -104,7 +116,8 @@ module.exports = {
 
     return res.send({'response_type': response_type,
                       'text' : "*"+ total +"*",
-                      'attachments' : [ {"text" : attachments_text}]
+                      'attachments' : [ {"text" : attachments_text, 'image_url' : image_url}]
+
                       })
 
   },
