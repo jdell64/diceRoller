@@ -7,6 +7,10 @@
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+function add(a, b) {
+    return a + b;
+}
+
 
 var crit_miss_texts = ['WOMP womp... Critical Miss!', 'Yay! Rolled a 1... oh wait, that\'s bad...',
                   'wow... you are terrible. Critical Miss.', 'Merry CritMiss!']
@@ -30,6 +34,25 @@ var crit_hit_urls = ['https://i.ytimg.com/vi/fGl4LOAgW50/maxresdefault.jpg',
 var droll = require('droll');
 
 module.exports = {
+
+  getCharacterAttributes: function(req, res){
+    rolls = []
+
+    for (var i = 0; i < 6; i++) {
+      roll = droll.roll('4d6')
+      roll.rolls.sort().shift()
+      var sum = roll.rolls.reduce(add, 0);
+      rolls.push(sum);
+    }
+    rolls = rolls.sort(function(a, b){return b-a})
+    rolls = rolls.join(', ')
+    res.send({'response_type': 'in_channel',
+                          'text' : "Your rolls: *" + rolls + "*"
+                          // 'attachments' : [ {"text" : attachments_text, 'image_url' : image_url}]
+                          })
+
+
+  },
 
   mm: function(req, res){
     lvl = parseInt(req.param('text'))
@@ -203,4 +226,3 @@ module.exports = {
 
   }
 };
-
